@@ -3,24 +3,24 @@ from app.printer import ConsolePrinter, ReversePrinter
 from app.serializer import JSONSerializer, XMLSerializer
 
 
+SERIALIZERS = {
+    "json": JSONSerializer,
+    "xml": XMLSerializer,
+}
+
+PRINTERS = {
+    "console": ConsolePrinter,
+    "reverse": ReversePrinter,
+}
+
 def main(book: Book, commands: list[tuple[str, str]]) -> None | str:
     for cmd, method_type in commands:
         if cmd == "serialize":
-            if method_type == "json":
-                return JSONSerializer().serialize(book)
-            elif method_type == "xml":
-                return XMLSerializer().serialize(book)
+            serializer = SERIALIZERS[method_type]()
+            return serializer.serialize(book)
         else:
-            if method_type == "console":
-                ConsolePrinter().print_book(
-                    book,
-                    show_title=(cmd != "display")
-                )
-            elif method_type == "reverse":
-                ReversePrinter().print_book(
-                    book,
-                    show_title=(cmd != "display")
-                )
+            printer = PRINTERS[method_type]()
+            printer.print_book(book, show_title=(cmd != "display"))
 
 
 if __name__ == "__main__":
